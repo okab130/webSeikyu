@@ -1,0 +1,150 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}文書アップロード - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>文書アップロード</h2>
+    <div>
+        <a href="{% url 'documents:staff_document_search' %}" class="btn btn-secondary">文書検索に戻る</a>
+        <a href="{% url 'documents:staff_dashboard' %}" class="btn btn-secondary">ダッシュボードに戻る</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">文書情報入力</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.client_code.id_for_label }}" class="form-label">
+                            {{ form.client_code.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.client_code }}
+                        {% if form.client_code.errors %}
+                            <div class="text-danger small">{{ form.client_code.errors }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">登録済みの取引先コードを入力してください</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.document_type.id_for_label }}" class="form-label">
+                            {{ form.document_type.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.document_type }}
+                        {% if form.document_type.errors %}
+                            <div class="text-danger small">{{ form.document_type.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.invoice_number.id_for_label }}" class="form-label">
+                            {{ form.invoice_number.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.invoice_number }}
+                        {% if form.invoice_number.errors %}
+                            <div class="text-danger small">{{ form.invoice_number.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.invoice_date.id_for_label }}" class="form-label">
+                            {{ form.invoice_date.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.invoice_date }}
+                        {% if form.invoice_date.errors %}
+                            <div class="text-danger small">{{ form.invoice_date.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.file.id_for_label }}" class="form-label">
+                            {{ form.file.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.file }}
+                        {% if form.file.errors %}
+                            <div class="text-danger small">{{ form.file.errors }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">PDF形式、最大20MBまで</small>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        {{ form.encrypt_flag }}
+                        <label class="form-check-label" for="{{ form.encrypt_flag.id_for_label }}">
+                            {{ form.encrypt_flag.label }}
+                        </label>
+                        {% if form.encrypt_flag.errors %}
+                            <div class="text-danger small">{{ form.encrypt_flag.errors }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted d-block">チェックすると、PDFにグループパスワードが設定されます</small>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'documents:staff_document_search' %}" class="btn btn-secondary">キャンセル</a>
+                        <button type="submit" class="btn btn-primary" onclick="return confirm('この内容でアップロードしてもよろしいですか？')">
+                            <i class="bi bi-upload"></i> アップロード
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">アップロードの流れ</h5>
+            </div>
+            <div class="card-body">
+                <ol class="mb-0">
+                    <li>取引先コードを入力</li>
+                    <li>文書種別を選択</li>
+                    <li>請求書番号を入力</li>
+                    <li>請求日を選択</li>
+                    <li>PDFファイルを選択</li>
+                    <li>アップロードボタンをクリック</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="card mb-3">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">自動処理</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>フォルダは自動作成されます</li>
+                    <li>版数は自動管理されます</li>
+                    <li>同名ファイルは新版として登録</li>
+                    <li>取引先担当者へメール通知</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">注意事項</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>ファイルサイズは20MB以下</li>
+                    <li>PDFファイルのみ対応</li>
+                    <li>取引先コードは事前登録が必要</li>
+                    <li>同じファイル名は新版として登録</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

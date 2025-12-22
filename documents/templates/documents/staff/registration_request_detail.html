@@ -1,0 +1,144 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}新規登録依頼詳細 - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>新規登録依頼詳細</h2>
+    <a href="{% url 'documents:registration_request_list' %}" class="btn btn-secondary">一覧に戻る</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">依頼情報</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="200">依頼日時</th>
+                        <td>{{ request.requested_at|date:"Y年m月d日 H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th>ステータス</th>
+                        <td>
+                            {% if request.status == 'pending' %}
+                                <span class="badge bg-warning text-dark">未承認</span>
+                            {% elif request.status == 'approved' %}
+                                <span class="badge bg-success">承認済み</span>
+                            {% elif request.status == 'rejected' %}
+                                <span class="badge bg-danger">却下</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>取引先コード</th>
+                        <td><strong>{{ request.client_code }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>取引先名</th>
+                        <td>{{ request.client_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>住所</th>
+                        <td>{{ request.address|linebreaks }}</td>
+                    </tr>
+                    <tr>
+                        <th>グループパスワード</th>
+                        <td><code>{{ request.group_password }}</code></td>
+                    </tr>
+                    {% if request.status != 'pending' %}
+                        <tr>
+                            <th>処理日時</th>
+                            <td>{{ request.processed_at|date:"Y年m月d日 H:i" }}</td>
+                        </tr>
+                        <tr>
+                            <th>処理者</th>
+                            <td>{{ request.processed_by.full_name }} ({{ request.processed_by.email }})</td>
+                        </tr>
+                    {% endif %}
+                    {% if request.rejection_reason %}
+                        <tr>
+                            <th>却下理由</th>
+                            <td class="text-danger">{{ request.rejection_reason|linebreaks }}</td>
+                        </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">担当者情報</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>順序</th>
+                            <th>担当者名</th>
+                            <th>メールアドレス</th>
+                            <th>パスワード</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contact in request.contacts.all %}
+                            <tr>
+                                <td>{{ contact.contact_order }}</td>
+                                <td>{{ contact.contact_name }}</td>
+                                <td>{{ contact.contact_email }}</td>
+                                <td><code>{{ contact.contact_password }}</code></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">操作</h5>
+            </div>
+            <div class="card-body">
+                {% if request.status == 'pending' %}
+                    <form method="post" action="{% url 'documents:registration_request_approve' request.id %}" class="mb-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success w-100 mb-2" onclick="return confirm('この新規登録依頼を承認してもよろしいですか？\n\n取引先、グループ、フォルダ、担当者ユーザーが作成されます。')">
+                            <i class="bi bi-check-circle"></i> 承認する
+                        </button>
+                    </form>
+                    <a href="{% url 'documents:registration_request_reject' request.id %}" class="btn btn-danger w-100">
+                        <i class="bi bi-x-circle"></i> 却下する
+                    </a>
+                {% else %}
+                    <div class="alert alert-info mb-0">
+                        この依頼は既に処理済みです。
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if request.status == 'pending' %}
+            <div class="card mt-3">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">承認時の処理内容</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>取引先マスタ作成</li>
+                        <li>グループ作成</li>
+                        <li>取引先フォルダ作成</li>
+                        <li>フォルダ権限設定</li>
+                        <li>担当者ユーザー作成（{{ request.contacts.count }}名）</li>
+                        <li>グループメンバー登録</li>
+                        <li>承認メール送信</li>
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

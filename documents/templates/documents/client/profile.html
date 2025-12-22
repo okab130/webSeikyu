@@ -1,0 +1,168 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}プロフィール - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>プロフィール</h2>
+    <div>
+        <a href="{% url 'documents:client_profile_edit' %}" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> 編集
+        </a>
+        <a href="{% url 'documents:client_dashboard' %}" class="btn btn-secondary">ダッシュボードに戻る</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">取引先情報</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="200">取引先コード</th>
+                        <td><strong class="fs-5">{{ client.client_code }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>取引先名</th>
+                        <td><strong>{{ client.client_name }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>住所</th>
+                        <td>{{ client.address|linebreaks }}</td>
+                    </tr>
+                    <tr>
+                        <th>登録日</th>
+                        <td>{{ client.created_at|date:"Y年m月d日" }}</td>
+                    </tr>
+                    <tr>
+                        <th>最終更新日</th>
+                        <td>{{ client.updated_at|date:"Y年m月d日" }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">グループ情報</h5>
+            </div>
+            <div class="card-body">
+                {% if group %}
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="200">グループID</th>
+                            <td>{{ group.group_id }}</td>
+                        </tr>
+                        <tr>
+                            <th>グループ名</th>
+                            <td>{{ group.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>グループパスワード</th>
+                            <td>
+                                <code>{{ group.group_password }}</code>
+                                <div class="small text-muted mt-1">
+                                    ※ PDF暗号化に使用されるパスワードです
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>メンバー数</th>
+                            <td>{{ group.members.count }}名</td>
+                        </tr>
+                    </table>
+                {% else %}
+                    <p class="text-muted mb-0">グループ情報がありません</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">担当者一覧</h5>
+            </div>
+            <div class="card-body">
+                {% if users %}
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>氏名</th>
+                                <th>メールアドレス</th>
+                                <th>ステータス</th>
+                                <th>最終ログイン</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contact in users %}
+                                <tr {% if contact.id == request.user.id %}class="table-primary"{% endif %}>
+                                    <td>
+                                        {{ contact.full_name }}
+                                        {% if contact.id == request.user.id %}
+                                            <span class="badge bg-primary">あなた</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ contact.email }}</td>
+                                    <td>
+                                        {% if contact.is_active %}
+                                            <span class="badge bg-success">有効</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">無効</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if contact.last_login %}
+                                            {{ contact.last_login|date:"Y/m/d H:i" }}
+                                        {% else %}
+                                            <span class="text-muted">未ログイン</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-muted mb-0">担当者が登録されていません</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">情報変更について</h5>
+            </div>
+            <div class="card-body">
+                <p>以下の情報を変更できます：</p>
+                <ul class="mb-0">
+                    <li>取引先名</li>
+                    <li>住所</li>
+                    <li>グループパスワード</li>
+                    <li>担当者の追加・変更・削除</li>
+                </ul>
+                <hr>
+                <p class="small text-muted mb-0">
+                    ※ グループパスワード以外は変更依頼が必要です。<br>
+                    ※ 管理者の承認後に反映されます。
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">注意事項</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>取引先コードは変更できません</li>
+                    <li>グループパスワードは即座に反映されます</li>
+                    <li>担当者は最大3名まで登録できます</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

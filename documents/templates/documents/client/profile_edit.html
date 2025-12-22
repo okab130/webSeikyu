@@ -1,0 +1,235 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}プロフィール編集 - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>プロフィール編集</h2>
+    <a href="{% url 'documents:client_profile' %}" class="btn btn-secondary">キャンセル</a>
+</div>
+
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i>
+    <strong>変更依頼について</strong><br>
+    グループパスワード以外の変更は、管理者の承認が必要です。承認後に反映されます。
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">基本情報</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="{{ form.client_name.id_for_label }}" class="form-label">取引先名 <span class="text-danger">*</span></label>
+                        {{ form.client_name }}
+                        {% if form.client_name.errors %}
+                            <div class="text-danger small">{{ form.client_name.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.address.id_for_label }}" class="form-label">住所 <span class="text-danger">*</span></label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                            <div class="text-danger small">{{ form.address.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.group_password.id_for_label }}" class="form-label">グループパスワード</label>
+                        {{ form.group_password }}
+                        {% if form.group_password.errors %}
+                            <div class="text-danger small">{{ form.group_password.errors }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            変更する場合のみ入力してください。空欄の場合は変更されません。<br>
+                            <strong class="text-primary">※ グループパスワードは即座に反映されます</strong>
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">担当者1</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        {{ form.contact1_change }}
+                        <label class="form-check-label" for="{{ form.contact1_change.id_for_label }}">
+                            担当者1を変更する
+                        </label>
+                    </div>
+
+                    <div id="contact1_fields" style="display: none;">
+                        <div class="mb-3">
+                            <label for="{{ form.contact1_name.id_for_label }}" class="form-label">氏名</label>
+                            {{ form.contact1_name }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.contact1_email.id_for_label }}" class="form-label">メールアドレス</label>
+                            {{ form.contact1_email }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.contact1_password.id_for_label }}" class="form-label">パスワード</label>
+                            {{ form.contact1_password }}
+                            <small class="form-text text-muted">変更する場合のみ入力してください</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">担当者2（任意）</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        {{ form.contact2_change }}
+                        <label class="form-check-label" for="{{ form.contact2_change.id_for_label }}">
+                            担当者2を変更する
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        {{ form.contact2_delete }}
+                        <label class="form-check-label text-danger" for="{{ form.contact2_delete.id_for_label }}">
+                            担当者2を削除する
+                        </label>
+                    </div>
+
+                    <div id="contact2_fields" style="display: none;">
+                        <div class="mb-3">
+                            <label for="{{ form.contact2_name.id_for_label }}" class="form-label">氏名</label>
+                            {{ form.contact2_name }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.contact2_email.id_for_label }}" class="form-label">メールアドレス</label>
+                            {{ form.contact2_email }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.contact2_password.id_for_label }}" class="form-label">パスワード</label>
+                            {{ form.contact2_password }}
+                            <small class="form-text text-muted">変更する場合のみ入力してください</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">担当者3（任意）</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        {{ form.contact3_change }}
+                        <label class="form-check-label" for="{{ form.contact3_change.id_for_label }}">
+                            担当者3を変更する
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        {{ form.contact3_delete }}
+                        <label class="form-check-label text-danger" for="{{ form.contact3_delete.id_for_label }}">
+                            担当者3を削除する
+                        </label>
+                    </div>
+
+                    <div id="contact3_fields" style="display: none;">
+                        <div class="mb-3">
+                            <label for="{{ form.contact3_name.id_for_label }}" class="form-label">氏名</label>
+                            {{ form.contact3_name }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.contact3_email.id_for_label }}" class="form-label">メールアドレス</label>
+                            {{ form.contact3_email }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.contact3_password.id_for_label }}" class="form-label">パスワード</label>
+                            {{ form.contact3_password }}
+                            <small class="form-text text-muted">変更する場合のみ入力してください</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>エラーがあります：</strong>
+                    <ul class="mb-0">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-between mb-4">
+                <a href="{% url 'documents:client_profile' %}" class="btn btn-secondary">キャンセル</a>
+                <button type="submit" class="btn btn-primary" onclick="return confirm('変更依頼を送信してもよろしいですか？')">
+                    <i class="bi bi-send"></i> 変更依頼を送信
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">変更の流れ</h5>
+                </div>
+                <div class="card-body">
+                    <ol class="mb-0">
+                        <li>変更内容を入力</li>
+                        <li>変更依頼を送信</li>
+                        <li>管理者が承認</li>
+                        <li>変更が反映される</li>
+                    </ol>
+                    <hr>
+                    <p class="small text-primary mb-0">
+                        <strong>即時反映：</strong><br>
+                        グループパスワードのみ即座に反映されます
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">注意事項</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>担当者は最大3名まで</li>
+                        <li>変更チェックを入れた項目のみ変更依頼されます</li>
+                        <li>削除チェックを入れると、その担当者を削除できます</li>
+                        <li>承認されるまで現在の情報が有効です</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+// 担当者1の変更チェックボックス
+document.getElementById('{{ form.contact1_change.id_for_label }}').addEventListener('change', function() {
+    document.getElementById('contact1_fields').style.display = this.checked ? 'block' : 'none';
+});
+
+// 担当者2の変更チェックボックス
+document.getElementById('{{ form.contact2_change.id_for_label }}').addEventListener('change', function() {
+    document.getElementById('contact2_fields').style.display = this.checked ? 'block' : 'none';
+});
+
+// 担当者3の変更チェックボックス
+document.getElementById('{{ form.contact3_change.id_for_label }}').addEventListener('change', function() {
+    document.getElementById('contact3_fields').style.display = this.checked ? 'block' : 'none';
+});
+</script>
+{% endblock %}

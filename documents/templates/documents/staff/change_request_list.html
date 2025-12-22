@@ -1,0 +1,104 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}変更依頼一覧 - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>変更依頼一覧</h2>
+    <a href="{% url 'documents:staff_dashboard' %}" class="btn btn-secondary">ダッシュボードに戻る</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if requests %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>依頼日時</th>
+                            <th>取引先コード</th>
+                            <th>取引先名</th>
+                            <th>変更内容</th>
+                            <th>ステータス</th>
+                            <th>処理日時</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in requests %}
+                            <tr>
+                                <td>{{ request.requested_at|date:"Y/m/d H:i" }}</td>
+                                <td>{{ request.client.client_code }}</td>
+                                <td>{{ request.client.client_name }}</td>
+                                <td>
+                                    {% if request.client_name %}
+                                        <span class="badge bg-info">取引先名</span>
+                                    {% endif %}
+                                    {% if request.address %}
+                                        <span class="badge bg-info">住所</span>
+                                    {% endif %}
+                                    {% if request.group_password %}
+                                        <span class="badge bg-warning text-dark">パスワード</span>
+                                    {% endif %}
+                                    {% if request.contact_changes.exists %}
+                                        <span class="badge bg-primary">担当者</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if request.status == 'pending' %}
+                                        <span class="badge bg-warning text-dark">未承認</span>
+                                    {% elif request.status == 'approved' %}
+                                        <span class="badge bg-success">承認済み</span>
+                                    {% elif request.status == 'rejected' %}
+                                        <span class="badge bg-danger">却下</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if request.processed_at %}
+                                        {{ request.processed_at|date:"Y/m/d H:i" }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'documents:change_request_detail' request.id %}" class="btn btn-sm btn-primary">詳細</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if is_paginated %}
+                <nav aria-label="ページネーション">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">最初</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">前へ</a>
+                            </li>
+                        {% endif %}
+
+                        <li class="page-item active">
+                            <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                        </li>
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">次へ</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">最後</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <p class="text-muted text-center py-4">変更依頼はありません</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,543 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}管理者向け操作マニュアル - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- サイドバー：目次 -->
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">目次</h5>
+                </div>
+                <div class="card-body">
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="#overview">1. システム概要</a>
+                        <a class="nav-link" href="#login">2. ログイン</a>
+                        <a class="nav-link" href="#dashboard">3. ダッシュボード</a>
+                        <a class="nav-link" href="#registration">4. 新規登録依頼管理</a>
+                        <a class="nav-link" href="#change">5. 変更依頼管理</a>
+                        <a class="nav-link" href="#clients">6. 取引先管理</a>
+                        <a class="nav-link" href="#documents">7. 文書管理</a>
+                        <a class="nav-link" href="#upload">8. 文書アップロード</a>
+                        <a class="nav-link" href="#api">9. API連携</a>
+                        <a class="nav-link" href="#admin">10. Django管理画面</a>
+                        <a class="nav-link" href="#troubleshooting">11. トラブルシューティング</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <h1 class="mb-4">管理者向け操作マニュアル</h1>
+            
+            <!-- 1. システム概要 -->
+            <section id="overview" class="mb-5">
+                <h2 class="border-bottom pb-2">1. システム概要</h2>
+                <p>WEB請求書システムは、請求書PDFファイルをオンラインで管理・配信するためのシステムです。</p>
+                
+                <h4>主な機能</h4>
+                <ul>
+                    <li><strong>文書管理</strong>: 請求書PDFの登録・検索・ダウンロード</li>
+                    <li><strong>取引先管理</strong>: 取引先情報とグループの管理</li>
+                    <li><strong>新規登録承認</strong>: 取引先からの新規登録依頼の承認</li>
+                    <li><strong>変更依頼承認</strong>: 担当者変更依頼の承認</li>
+                    <li><strong>PDF暗号化</strong>: グループパスワードによる自動暗号化</li>
+                    <li><strong>API連携</strong>: 請求書発行システムからの自動登録</li>
+                    <li><strong>メール通知</strong>: 文書登録時の自動通知</li>
+                </ul>
+                
+                <h4>ユーザー種別</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ユーザー種別</th>
+                                <th>説明</th>
+                                <th>権限</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>管理者（staff）</td>
+                                <td>システム管理者・事務担当者</td>
+                                <td>全機能の利用、承認・管理操作</td>
+                            </tr>
+                            <tr>
+                                <td>取引先（client）</td>
+                                <td>取引先の担当者</td>
+                                <td>自社の文書閲覧・ダウンロード、プロフィール編集</td>
+                            </tr>
+                            <tr>
+                                <td>APIユーザー（api）</td>
+                                <td>請求書発行システム</td>
+                                <td>API経由での文書登録のみ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- 2. ログイン -->
+            <section id="login" class="mb-5">
+                <h2 class="border-bottom pb-2">2. ログイン</h2>
+                
+                <h4>ログイン手順</h4>
+                <ol>
+                    <li>ブラウザでシステムのURLにアクセス
+                        <div class="bg-light p-2 mt-2 mb-2">
+                            <code>http://your-domain.com/login/</code>
+                        </div>
+                    </li>
+                    <li>メールアドレスとパスワードを入力</li>
+                    <li>「ログイン」ボタンをクリック</li>
+                </ol>
+                
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> <strong>初期アカウント</strong><br>
+                    メール: staff@example.com<br>
+                    パスワード: staff123<br>
+                    ※初回ログイン後、必ずパスワードを変更してください
+                </div>
+                
+                <h4>パスワードを忘れた場合</h4>
+                <p>Django管理画面からパスワードをリセットできます。</p>
+                <ol>
+                    <li>管理画面にアクセス: <code>http://your-domain.com/admin/</code></li>
+                    <li>「ユーザー」→ 該当ユーザーを選択</li>
+                    <li>「このフォーム」セクションで新しいパスワードを設定</li>
+                </ol>
+            </section>
+            
+            <!-- 3. ダッシュボード -->
+            <section id="dashboard" class="mb-5">
+                <h2 class="border-bottom pb-2">3. ダッシュボード</h2>
+                <p>ログイン後、スタッフダッシュボード画面が表示されます。</p>
+                
+                <h4>ダッシュボードの機能</h4>
+                <ul>
+                    <li><strong>新規登録依頼（未承認）</strong>: 承認待ちの新規登録依頼一覧</li>
+                    <li><strong>変更依頼（未承認）</strong>: 承認待ちの変更依頼一覧</li>
+                    <li><strong>クイックアクション</strong>: 各機能への素早いアクセス
+                        <ul>
+                            <li>取引先一覧</li>
+                            <li>文書検索</li>
+                            <li>文書アップロード</li>
+                            <li>管理画面</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> <strong>注意</strong><br>
+                    未承認の依頼は速やかに対応してください。依頼者は承認されるまでシステムを利用できません。
+                </div>
+            </section>
+            
+            <!-- 4. 新規登録依頼管理 -->
+            <section id="registration" class="mb-5">
+                <h2 class="border-bottom pb-2">4. 新規登録依頼管理</h2>
+                
+                <h4>新規登録依頼の承認手順</h4>
+                <ol>
+                    <li>ダッシュボードから「新規登録依頼（未承認）」の「詳細」ボタンをクリック</li>
+                    <li>依頼内容を確認
+                        <ul>
+                            <li>取引先コード（5桁）</li>
+                            <li>取引先名</li>
+                            <li>郵便番号・住所</li>
+                            <li>電話番号・FAX番号</li>
+                            <li>代表メールアドレス</li>
+                            <li>グループパスワード</li>
+                            <li>担当者情報（氏名、メール、パスワード）</li>
+                        </ul>
+                    </li>
+                    <li>内容に問題がなければ「承認」ボタンをクリック</li>
+                    <li>確認ダイアログで「OK」をクリック</li>
+                </ol>
+                
+                <h4>承認時の自動処理</h4>
+                <ul>
+                    <li>取引先マスタの作成</li>
+                    <li>グループの作成</li>
+                    <li>グループメンバー（担当者）の作成</li>
+                    <li>ログイン用ユーザーアカウントの作成</li>
+                    <li>承認完了メールの送信</li>
+                </ul>
+                
+                <h4>却下する場合</h4>
+                <ol>
+                    <li>依頼詳細画面で「却下」ボタンをクリック</li>
+                    <li>却下理由を入力</li>
+                    <li>「却下する」ボタンをクリック</li>
+                    <li>却下通知メールが申請者に送信されます</li>
+                </ol>
+                
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> <strong>ヒント</strong><br>
+                    取引先コードは既存の取引先と重複しないように注意してください。
+                </div>
+            </section>
+            
+            <!-- 5. 変更依頼管理 -->
+            <section id="change" class="mb-5">
+                <h2 class="border-bottom pb-2">5. 変更依頼管理</h2>
+                
+                <h4>変更依頼の種類</h4>
+                <ul>
+                    <li>担当者の追加</li>
+                    <li>担当者の削除</li>
+                    <li>担当者情報の変更（氏名、メールアドレス）</li>
+                </ul>
+                
+                <h4>変更依頼の承認手順</h4>
+                <ol>
+                    <li>ダッシュボードから「変更依頼（未承認）」の「詳細」ボタンをクリック</li>
+                    <li>変更内容を確認</li>
+                    <li>問題なければ「承認」ボタンをクリック</li>
+                    <li>変更が適用され、申請者にメール通知されます</li>
+                </ol>
+                
+                <h4>却下する場合</h4>
+                <ol>
+                    <li>変更依頼詳細画面で「却下」ボタンをクリック</li>
+                    <li>却下理由を入力</li>
+                    <li>「却下する」ボタンをクリック</li>
+                </ol>
+            </section>
+            
+            <!-- 6. 取引先管理 -->
+            <section id="clients" class="mb-5">
+                <h2 class="border-bottom pb-2">6. 取引先管理</h2>
+                
+                <h4>取引先一覧の表示</h4>
+                <ol>
+                    <li>ダッシュボードから「取引先一覧」をクリック</li>
+                    <li>登録されている全取引先が表示されます</li>
+                </ol>
+                
+                <h4>取引先詳細の確認</h4>
+                <ol>
+                    <li>取引先一覧から「詳細」ボタンをクリック</li>
+                    <li>以下の情報が表示されます
+                        <ul>
+                            <li>基本情報（コード、名称、住所、連絡先）</li>
+                            <li>グループ情報（グループパスワード）</li>
+                            <li>担当者一覧（氏名、メール、ログイン状態）</li>
+                        </ul>
+                    </li>
+                </ol>
+                
+                <h4>取引先の文書検索</h4>
+                <p>取引先詳細画面から「文書を検索」ボタンをクリックすると、その取引先の文書のみを検索できます。</p>
+                
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> <strong>重要</strong><br>
+                    グループパスワードは文書の暗号化に使用されます。変更すると、既存の暗号化文書が開けなくなる可能性があります。
+                </div>
+            </section>
+            
+            <!-- 7. 文書管理 -->
+            <section id="documents" class="mb-5">
+                <h2 class="border-bottom pb-2">7. 文書管理</h2>
+                
+                <h4>文書検索</h4>
+                <ol>
+                    <li>ダッシュボードから「文書検索」をクリック</li>
+                    <li>検索条件を入力
+                        <ul>
+                            <li><strong>取引先コード</strong>: 空欄の場合は全件検索</li>
+                            <li><strong>年度</strong>: 例：2024</li>
+                            <li><strong>月</strong>: 例：12</li>
+                        </ul>
+                    </li>
+                    <li>「検索」ボタンをクリック</li>
+                </ol>
+                
+                <h4>検索パターン例</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>取引先コード</th>
+                                <th>年度</th>
+                                <th>月</th>
+                                <th>結果</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>（空欄）</td>
+                                <td>（空欄）</td>
+                                <td>（空欄）</td>
+                                <td>全文書を表示</td>
+                            </tr>
+                            <tr>
+                                <td>00001</td>
+                                <td>（空欄）</td>
+                                <td>（空欄）</td>
+                                <td>取引先00001の全文書</td>
+                            </tr>
+                            <tr>
+                                <td>（空欄）</td>
+                                <td>2024</td>
+                                <td>（空欄）</td>
+                                <td>2024年の全文書</td>
+                            </tr>
+                            <tr>
+                                <td>00001</td>
+                                <td>2024</td>
+                                <td>12</td>
+                                <td>取引先00001の2024年12月の文書</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h4>文書詳細の確認</h4>
+                <ol>
+                    <li>検索結果から「詳細」をクリック</li>
+                    <li>文書情報が表示されます
+                        <ul>
+                            <li>ファイル名</li>
+                            <li>文書種別（月次/随時）</li>
+                            <li>請求書番号</li>
+                            <li>請求日</li>
+                            <li>版数</li>
+                            <li>ファイルサイズ</li>
+                            <li>暗号化フラグ</li>
+                            <li>アップロード日時・ユーザー</li>
+                        </ul>
+                    </li>
+                </ol>
+                
+                <h4>文書のダウンロード</h4>
+                <ol>
+                    <li>文書詳細画面または検索結果から「ダウンロード」をクリック</li>
+                    <li>PDFファイルがダウンロードされます</li>
+                    <li>暗号化されている場合、グループパスワードの入力が必要です</li>
+                </ol>
+                
+                <h4>文書の削除</h4>
+                <ol>
+                    <li>文書詳細画面で「削除」ボタンをクリック</li>
+                    <li>確認ダイアログで「OK」をクリック</li>
+                    <li><strong>注意</strong>: 同じファイル名の全ての版が削除されます</li>
+                </ol>
+                
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> <strong>警告</strong><br>
+                    削除した文書は復元できません。削除前に必ず確認してください。
+                </div>
+            </section>
+            
+            <!-- 8. 文書アップロード -->
+            <section id="upload" class="mb-5">
+                <h2 class="border-bottom pb-2">8. 文書アップロード</h2>
+                
+                <h4>アップロード手順</h4>
+                <ol>
+                    <li>ダッシュボードまたは文書検索画面から「文書アップロード」をクリック</li>
+                    <li>文書情報を入力
+                        <ul>
+                            <li><strong>取引先コード</strong>: 5桁の数字（必須）</li>
+                            <li><strong>文書種別</strong>: 月次請求書 or 随時請求書（必須）</li>
+                            <li><strong>請求書番号</strong>: 例：INV-00001-202412-001（必須）</li>
+                            <li><strong>請求日</strong>: カレンダーから選択（必須）</li>
+                            <li><strong>PDFファイル</strong>: 最大20MB（必須）</li>
+                            <li><strong>暗号化する</strong>: チェックするとグループパスワードで暗号化</li>
+                        </ul>
+                    </li>
+                    <li>「アップロード」ボタンをクリック</li>
+                    <li>確認ダイアログで「OK」をクリック</li>
+                </ol>
+                
+                <h4>自動処理</h4>
+                <ul>
+                    <li><strong>フォルダ自動作成</strong>: 取引先コード → 年度 → 月 の階層構造</li>
+                    <li><strong>版数管理</strong>: 同じファイル名の場合、版数が自動的にインクリメント</li>
+                    <li><strong>暗号化</strong>: チェックONの場合、グループパスワードで暗号化</li>
+                    <li><strong>メール通知</strong>: 取引先の全担当者にメール送信</li>
+                </ul>
+                
+                <h4>注意事項</h4>
+                <ul>
+                    <li>ファイルサイズは20MB以下</li>
+                    <li>PDFファイルのみアップロード可能</li>
+                    <li>取引先コードは事前に登録されている必要があります</li>
+                    <li>同じファイル名でアップロードすると新版として登録されます</li>
+                    <li>暗号化にはグループパスワードが必要です</li>
+                </ul>
+                
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> <strong>ヒント</strong><br>
+                    暗号化された文書は、取引先のグループパスワードを使用して開けます。
+                </div>
+            </section>
+            
+            <!-- 9. API連携 -->
+            <section id="api" class="mb-5">
+                <h2 class="border-bottom pb-2">9. API連携</h2>
+                
+                <h4>APIユーザーの作成</h4>
+                <ol>
+                    <li>Django管理画面にアクセス: <code>http://your-domain.com/admin/</code></li>
+                    <li>「ユーザー」→「ユーザーを追加」をクリック</li>
+                    <li>以下の情報を入力
+                        <ul>
+                            <li>メールアドレス: api@yourcompany.com</li>
+                            <li>氏名: 請求書発行システム</li>
+                            <li>ユーザー種別: api</li>
+                            <li>有効: チェックON</li>
+                        </ul>
+                    </li>
+                    <li>パスワードを設定</li>
+                    <li>「保存」をクリック</li>
+                </ol>
+                
+                <h4>API利用手順書</h4>
+                <p>詳細な利用手順は <code>API_USAGE.md</code> を参照してください。</p>
+                
+                <h4>APIエンドポイント</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>エンドポイント</th>
+                                <th>メソッド</th>
+                                <th>説明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>/api/login/</td>
+                                <td>POST</td>
+                                <td>APIログイン</td>
+                            </tr>
+                            <tr>
+                                <td>/api/logout/</td>
+                                <td>POST</td>
+                                <td>APIログアウト</td>
+                            </tr>
+                            <tr>
+                                <td>/api/documents/upload/</td>
+                                <td>POST</td>
+                                <td>文書アップロード</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- 10. Django管理画面 -->
+            <section id="admin" class="mb-5">
+                <h2 class="border-bottom pb-2">10. Django管理画面</h2>
+                
+                <h4>アクセス方法</h4>
+                <ol>
+                    <li>ダッシュボードから「管理画面」をクリック</li>
+                    <li>または直接 <code>http://your-domain.com/admin/</code> にアクセス</li>
+                </ol>
+                
+                <h4>管理画面でできること</h4>
+                <ul>
+                    <li><strong>ユーザー管理</strong>: ユーザーの追加・編集・削除、パスワードリセット</li>
+                    <li><strong>取引先管理</strong>: 取引先情報の直接編集</li>
+                    <li><strong>グループ管理</strong>: グループパスワードの変更</li>
+                    <li><strong>文書管理</strong>: 文書の直接編集・削除</li>
+                    <li><strong>フォルダ管理</strong>: フォルダ構造の確認・編集</li>
+                </ul>
+                
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> <strong>警告</strong><br>
+                    管理画面での直接編集は慎重に行ってください。誤った操作はシステムの動作に影響を与える可能性があります。
+                </div>
+            </section>
+            
+            <!-- 11. トラブルシューティング -->
+            <section id="troubleshooting" class="mb-5">
+                <h2 class="border-bottom pb-2">11. トラブルシューティング</h2>
+                
+                <h4>よくある問題と解決方法</h4>
+                
+                <h5>Q1: ログインできない</h5>
+                <ul>
+                    <li>メールアドレスとパスワードが正しいか確認</li>
+                    <li>ユーザーが有効化されているか確認（管理画面で確認）</li>
+                    <li>ユーザー種別が「staff」になっているか確認</li>
+                </ul>
+                
+                <h5>Q2: 文書がアップロードできない</h5>
+                <ul>
+                    <li>ファイルサイズが20MB以下か確認</li>
+                    <li>ファイル形式がPDFか確認</li>
+                    <li>取引先コードが正しいか確認</li>
+                    <li>暗号化ONの場合、グループパスワードが設定されているか確認</li>
+                </ul>
+                
+                <h5>Q3: PDFが暗号化されない</h5>
+                <ul>
+                    <li>「暗号化する」にチェックが入っているか確認</li>
+                    <li>取引先のグループパスワードが設定されているか確認</li>
+                    <li>エラーメッセージを確認</li>
+                </ul>
+                
+                <h5>Q4: メール通知が届かない</h5>
+                <ul>
+                    <li>メールサーバーの設定を確認（settings.py）</li>
+                    <li>受信者のメールアドレスが正しいか確認</li>
+                    <li>迷惑メールフォルダを確認</li>
+                </ul>
+                
+                <h5>Q5: 検索しても文書が表示されない</h5>
+                <ul>
+                    <li>検索条件が正しいか確認</li>
+                    <li>全件検索（全項目空欄）で確認</li>
+                    <li>文書が実際に登録されているか管理画面で確認</li>
+                </ul>
+                
+                <h4>サポート</h4>
+                <p>上記で解決しない場合は、システム管理者に問い合わせてください。</p>
+            </section>
+            
+            <div class="text-center my-5">
+                <a href="{% url 'documents:staff_dashboard' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-house"></i> ダッシュボードに戻る
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .nav-link {
+        padding: 0.5rem 1rem;
+        color: #495057;
+    }
+    .nav-link:hover {
+        background-color: #f8f9fa;
+        color: #007bff;
+    }
+    section {
+        scroll-margin-top: 70px;
+    }
+    h2 {
+        color: #007bff;
+        margin-top: 2rem;
+    }
+    h4 {
+        color: #495057;
+        margin-top: 1.5rem;
+    }
+    h5 {
+        color: #6c757d;
+        margin-top: 1rem;
+    }
+    code {
+        background-color: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}新規取引先登録 - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">新規取引先登録</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <h5 class="border-bottom pb-2 mb-3">取引先情報</h5>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.client_code.id_for_label }}" class="form-label">取引先コード <span class="text-danger">*</span></label>
+                        {{ form.client_code }}
+                        <small class="form-text text-muted">{{ form.client_code.help_text }}</small>
+                        {% if form.client_code.errors %}
+                            <div class="text-danger">{{ form.client_code.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.client_name.id_for_label }}" class="form-label">取引先名 <span class="text-danger">*</span></label>
+                        {{ form.client_name }}
+                        {% if form.client_name.errors %}
+                            <div class="text-danger">{{ form.client_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.address.id_for_label }}" class="form-label">住所 <span class="text-danger">*</span></label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                            <div class="text-danger">{{ form.address.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">グループパスワード（PDF暗号化用）</h5>
+                    <div class="alert alert-info">
+                        <small>ダウンロードしたPDFファイルを開く際に必要なパスワードです。担当者全員で共有してください。</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.group_password.id_for_label }}" class="form-label">グループパスワード <span class="text-danger">*</span></label>
+                        {{ form.group_password }}
+                        {% if form.group_password.errors %}
+                            <div class="text-danger">{{ form.group_password.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.group_password_confirm.id_for_label }}" class="form-label">グループパスワード（確認） <span class="text-danger">*</span></label>
+                        {{ form.group_password_confirm }}
+                        {% if form.group_password_confirm.errors %}
+                            <div class="text-danger">{{ form.group_password_confirm.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">担当者情報</h5>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">担当者1 <span class="text-danger">*（必須）</span></div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">氏名</label>
+                                {{ form.contact1_name }}
+                                {% if form.contact1_name.errors %}<div class="text-danger">{{ form.contact1_name.errors }}</div>{% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">メールアドレス</label>
+                                {{ form.contact1_email }}
+                                {% if form.contact1_email.errors %}<div class="text-danger">{{ form.contact1_email.errors }}</div>{% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">パスワード</label>
+                                {{ form.contact1_password }}
+                                {% if form.contact1_password.errors %}<div class="text-danger">{{ form.contact1_password.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">担当者2 <span class="text-muted">（任意）</span></div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">氏名</label>
+                                {{ form.contact2_name }}
+                                {% if form.contact2_name.errors %}<div class="text-danger">{{ form.contact2_name.errors }}</div>{% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">メールアドレス</label>
+                                {{ form.contact2_email }}
+                                {% if form.contact2_email.errors %}<div class="text-danger">{{ form.contact2_email.errors }}</div>{% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">パスワード</label>
+                                {{ form.contact2_password }}
+                                {% if form.contact2_password.errors %}<div class="text-danger">{{ form.contact2_password.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">担当者3 <span class="text-muted">（任意）</span></div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">氏名</label>
+                                {{ form.contact3_name }}
+                                {% if form.contact3_name.errors %}<div class="text-danger">{{ form.contact3_name.errors }}</div>{% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">メールアドレス</label>
+                                {{ form.contact3_email }}
+                                {% if form.contact3_email.errors %}<div class="text-danger">{{ form.contact3_email.errors }}</div>{% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">パスワード</label>
+                                {{ form.contact3_password }}
+                                {% if form.contact3_password.errors %}<div class="text-danger">{{ form.contact3_password.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg w-100">登録依頼を送信</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

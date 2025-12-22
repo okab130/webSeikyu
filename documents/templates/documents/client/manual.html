@@ -1,0 +1,410 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}取引先向け操作マニュアル - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- サイドバー：目次 -->
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">目次</h5>
+                </div>
+                <div class="card-body">
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="#overview">1. システム概要</a>
+                        <a class="nav-link" href="#registration">2. 新規登録</a>
+                        <a class="nav-link" href="#login">3. ログイン</a>
+                        <a class="nav-link" href="#dashboard">4. ダッシュボード</a>
+                        <a class="nav-link" href="#documents">5. 文書閲覧・ダウンロード</a>
+                        <a class="nav-link" href="#profile">6. プロフィール管理</a>
+                        <a class="nav-link" href="#members">7. 担当者管理</a>
+                        <a class="nav-link" href="#password">8. パスワード変更</a>
+                        <a class="nav-link" href="#faq">9. よくある質問</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <h1 class="mb-4">取引先向け操作マニュアル</h1>
+            
+            <!-- 1. システム概要 -->
+            <section id="overview" class="mb-5">
+                <h2 class="border-bottom pb-2">1. システム概要</h2>
+                <p>WEB請求書システムは、請求書をオンラインで受け取り、閲覧・ダウンロードできるシステムです。</p>
+                
+                <h4>できること</h4>
+                <ul>
+                    <li><i class="bi bi-check-circle text-success"></i> 請求書PDFの閲覧・ダウンロード</li>
+                    <li><i class="bi bi-check-circle text-success"></i> 過去の請求書の検索</li>
+                    <li><i class="bi bi-check-circle text-success"></i> 新しい請求書が登録されたときのメール通知</li>
+                    <li><i class="bi bi-check-circle text-success"></i> 会社情報・担当者情報の管理</li>
+                    <li><i class="bi bi-check-circle text-success"></i> パスワードで保護された安全な文書管理</li>
+                </ul>
+                
+                <h4>利用環境</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>項目</th>
+                                <th>推奨環境</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ブラウザ</td>
+                                <td>Chrome、Firefox、Safari、Edge（最新版）</td>
+                            </tr>
+                            <tr>
+                                <td>PDFビューア</td>
+                                <td>Adobe Acrobat Reader DC、ブラウザ内蔵ビューア</td>
+                            </tr>
+                            <tr>
+                                <td>インターネット接続</td>
+                                <td>必須</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- 2. 新規登録 -->
+            <section id="registration" class="mb-5">
+                <h2 class="border-bottom pb-2">2. 新規登録</h2>
+                
+                <h4>初めてご利用の方</h4>
+                <p>システムを利用するには、まず新規登録申請を行う必要があります。</p>
+                
+                <h4>新規登録手順</h4>
+                <ol>
+                    <li>システムのトップページにアクセス</li>
+                    <li>「新規登録はこちら」ボタンをクリック</li>
+                    <li>取引先情報を入力
+                        <ul>
+                            <li><strong>取引先コード</strong>: 弊社から通知された5桁のコード</li>
+                            <li><strong>取引先名</strong>: 御社の正式名称</li>
+                            <li><strong>郵便番号・住所</strong></li>
+                            <li><strong>電話番号・FAX番号</strong></li>
+                            <li><strong>代表メールアドレス</strong></li>
+                        </ul>
+                    </li>
+                    <li>グループパスワードを設定
+                        <div class="alert alert-warning mt-2">
+                            <i class="bi bi-exclamation-triangle"></i> <strong>重要</strong><br>
+                            このパスワードは請求書PDFを開く際に使用します。忘れないようメモしてください。
+                        </div>
+                    </li>
+                    <li>担当者情報を入力
+                        <ul>
+                            <li>氏名</li>
+                            <li>メールアドレス（ログインIDとして使用）</li>
+                            <li>パスワード</li>
+                        </ul>
+                    </li>
+                    <li>「登録申請」ボタンをクリック</li>
+                    <li>申請完了画面が表示されます</li>
+                </ol>
+                
+                <h4>承認について</h4>
+                <p>申請後、弊社担当者が内容を確認し承認します。承認完了後、登録したメールアドレスに通知が届きます。</p>
+                
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> <strong>承認の目安</strong><br>
+                    通常、1〜2営業日以内に承認完了のご連絡をいたします。
+                </div>
+            </section>
+            
+            <!-- 3. ログイン -->
+            <section id="login" class="mb-5">
+                <h2 class="border-bottom pb-2">3. ログイン</h2>
+                
+                <h4>ログイン手順</h4>
+                <ol>
+                    <li>システムのログイン画面にアクセス
+                        <div class="bg-light p-2 mt-2 mb-2">
+                            <code>http://your-domain.com/login/</code>
+                        </div>
+                    </li>
+                    <li>登録時に設定したメールアドレスとパスワードを入力</li>
+                    <li>「ログイン」ボタンをクリック</li>
+                    <li>ダッシュボード画面が表示されます</li>
+                </ol>
+                
+                <h4>ログインできない場合</h4>
+                <ul>
+                    <li>メールアドレスとパスワードが正しいか確認</li>
+                    <li>新規登録申請が承認されているか確認（承認通知メールを確認）</li>
+                    <li>大文字・小文字が正しいか確認</li>
+                </ul>
+                
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> <strong>パスワードを忘れた場合</strong><br>
+                    弊社担当者までご連絡ください。パスワードをリセットいたします。
+                </div>
+            </section>
+            
+            <!-- 4. ダッシュボード -->
+            <section id="dashboard" class="mb-5">
+                <h2 class="border-bottom pb-2">4. ダッシュボード</h2>
+                <p>ログイン後、ダッシュボード画面が表示されます。</p>
+                
+                <h4>ダッシュボードの機能</h4>
+                
+                <h5>最新文書（3件）</h5>
+                <p>最近登録された請求書が表示されます。「詳細」ボタンをクリックすると文書詳細画面に移動します。</p>
+                
+                <h5>クイックアクション</h5>
+                <ul>
+                    <li><strong>文書一覧</strong>: 全ての請求書を閲覧</li>
+                    <li><strong>プロフィール</strong>: 会社情報・担当者情報の確認・編集</li>
+                </ul>
+            </section>
+            
+            <!-- 5. 文書閲覧・ダウンロード -->
+            <section id="documents" class="mb-5">
+                <h2 class="border-bottom pb-2">5. 文書閲覧・ダウンロード</h2>
+                
+                <h4>文書一覧の表示</h4>
+                <ol>
+                    <li>ダッシュボードから「文書一覧」をクリック</li>
+                    <li>年度と月を選択して絞り込み（任意）</li>
+                    <li>請求書の一覧が表示されます</li>
+                </ol>
+                
+                <h4>表示される情報</h4>
+                <ul>
+                    <li>ファイル名</li>
+                    <li>文書種別（月次請求書 / 随時請求書）</li>
+                    <li>請求書番号</li>
+                    <li>請求日</li>
+                    <li>登録日</li>
+                </ul>
+                
+                <h4>文書詳細の確認</h4>
+                <ol>
+                    <li>文書一覧から「詳細」ボタンをクリック</li>
+                    <li>文書の詳細情報が表示されます</li>
+                </ol>
+                
+                <h4>PDFのダウンロード方法</h4>
+                <ol>
+                    <li>文書詳細画面または文書一覧から「ダウンロード」ボタンをクリック</li>
+                    <li>PDFファイルがダウンロードされます</li>
+                    <li>暗号化されている場合、Adobe Readerなどで開く際にパスワードを求められます</li>
+                    <li>グループパスワードを入力してください</li>
+                </ol>
+                
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> <strong>グループパスワードとは？</strong><br>
+                    新規登録時に設定したパスワードです。請求書PDFを開く際に必要になります。
+                </div>
+                
+                <h4>ブラウザで直接表示する場合</h4>
+                <p>一部のブラウザでは、ダウンロードせずにブラウザ内でPDFを表示できます。その場合もパスワードの入力が必要です。</p>
+            </section>
+            
+            <!-- 6. プロフィール管理 -->
+            <section id="profile" class="mb-5">
+                <h2 class="border-bottom pb-2">6. プロフィール管理</h2>
+                
+                <h4>プロフィールの表示</h4>
+                <ol>
+                    <li>ダッシュボードから「プロフィール」をクリック</li>
+                    <li>取引先情報と担当者一覧が表示されます</li>
+                </ol>
+                
+                <h4>表示される情報</h4>
+                
+                <h5>取引先情報</h5>
+                <ul>
+                    <li>取引先コード</li>
+                    <li>取引先名</li>
+                    <li>郵便番号・住所</li>
+                    <li>電話番号・FAX番号</li>
+                    <li>代表メールアドレス</li>
+                </ul>
+                
+                <h5>担当者一覧</h5>
+                <ul>
+                    <li>氏名</li>
+                    <li>メールアドレス</li>
+                    <li>最終ログイン日時</li>
+                </ul>
+                
+                <h4>プロフィールの編集</h4>
+                <ol>
+                    <li>プロフィール画面で「編集」ボタンをクリック</li>
+                    <li>変更したい項目を修正
+                        <ul>
+                            <li>取引先名</li>
+                            <li>郵便番号・住所</li>
+                            <li>電話番号・FAX番号</li>
+                            <li>代表メールアドレス</li>
+                        </ul>
+                    </li>
+                    <li>「変更申請」ボタンをクリック</li>
+                    <li>弊社担当者が承認後、変更が反映されます</li>
+                </ol>
+                
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> <strong>注意</strong><br>
+                    取引先コードは変更できません。変更が必要な場合は弊社担当者にご連絡ください。
+                </div>
+            </section>
+            
+            <!-- 7. 担当者管理 -->
+            <section id="members" class="mb-5">
+                <h2 class="border-bottom pb-2">7. 担当者管理</h2>
+                
+                <h4>担当者の追加</h4>
+                <ol>
+                    <li>プロフィール画面で「編集」ボタンをクリック</li>
+                    <li>「担当者を追加」ボタンをクリック</li>
+                    <li>新しい担当者の情報を入力
+                        <ul>
+                            <li>氏名</li>
+                            <li>メールアドレス（ログインIDとして使用）</li>
+                            <li>パスワード</li>
+                        </ul>
+                    </li>
+                    <li>「変更申請」ボタンをクリック</li>
+                    <li>弊社担当者が承認後、追加されます</li>
+                    <li>承認後、新しい担当者はログインできるようになります</li>
+                </ol>
+                
+                <h4>担当者の削除</h4>
+                <ol>
+                    <li>プロフィール画面で「編集」ボタンをクリック</li>
+                    <li>削除したい担当者の「削除」ボタンをクリック</li>
+                    <li>「変更申請」ボタンをクリック</li>
+                    <li>弊社担当者が承認後、削除されます</li>
+                </ol>
+                
+                <h4>担当者情報の変更</h4>
+                <ol>
+                    <li>プロフィール画面で「編集」ボタンをクリック</li>
+                    <li>変更したい担当者の情報を修正</li>
+                    <li>「変更申請」ボタンをクリック</li>
+                    <li>弊社担当者が承認後、変更が反映されます</li>
+                </ol>
+                
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> <strong>ヒント</strong><br>
+                    担当者は何人でも追加できます。複数の方で請求書を確認する場合に便利です。
+                </div>
+            </section>
+            
+            <!-- 8. パスワード変更 -->
+            <section id="password" class="mb-5">
+                <h2 class="border-bottom pb-2">8. パスワード変更</h2>
+                
+                <h4>ログインパスワードの変更</h4>
+                <p>セキュリティのため、定期的にパスワードを変更することをお勧めします。</p>
+                
+                <ol>
+                    <li>画面右上のユーザーメニューをクリック</li>
+                    <li>「パスワード変更」を選択</li>
+                    <li>現在のパスワードと新しいパスワードを入力</li>
+                    <li>「変更」ボタンをクリック</li>
+                </ol>
+                
+                <h4>グループパスワードの変更</h4>
+                <p>グループパスワード（PDF開封用）は、プロフィール編集画面から変更申請できます。</p>
+                
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> <strong>重要</strong><br>
+                    グループパスワードを変更すると、変更前に登録された請求書PDFは開けなくなります。変更前に必要な請求書をダウンロード・保存してください。
+                </div>
+            </section>
+            
+            <!-- 9. よくある質問 -->
+            <section id="faq" class="mb-5">
+                <h2 class="border-bottom pb-2">9. よくある質問</h2>
+                
+                <h4>Q1: 新規登録申請後、いつから利用できますか？</h4>
+                <p><strong>A:</strong> 通常1〜2営業日以内に承認完了のご連絡をいたします。承認後すぐにご利用いただけます。</p>
+                
+                <h4>Q2: グループパスワードを忘れてしまいました</h4>
+                <p><strong>A:</strong> 弊社担当者までご連絡ください。パスワードをお伝えいたします。</p>
+                
+                <h4>Q3: ログインパスワードを忘れてしまいました</h4>
+                <p><strong>A:</strong> 弊社担当者までご連絡ください。パスワードをリセットいたします。</p>
+                
+                <h4>Q4: PDFが開けません</h4>
+                <p><strong>A:</strong> 以下をご確認ください。</p>
+                <ul>
+                    <li>Adobe Acrobat Reader DCなど、PDFリーダーがインストールされているか</li>
+                    <li>グループパスワードを正しく入力しているか</li>
+                    <li>ファイルが正しくダウンロードされているか（ファイルサイズを確認）</li>
+                </ul>
+                
+                <h4>Q5: メールアドレスを変更したい</h4>
+                <p><strong>A:</strong> プロフィール編集画面から変更申請してください。承認後、新しいメールアドレスでログインできるようになります。</p>
+                
+                <h4>Q6: 担当者を追加したい</h4>
+                <p><strong>A:</strong> プロフィール編集画面から担当者追加の申請ができます。承認後、新しい担当者がログインできるようになります。</p>
+                
+                <h4>Q7: 過去の請求書を検索したい</h4>
+                <p><strong>A:</strong> 文書一覧画面で年度・月を指定して絞り込み検索ができます。</p>
+                
+                <h4>Q8: 請求書の到着通知メールが届きません</h4>
+                <p><strong>A:</strong> 以下をご確認ください。</p>
+                <ul>
+                    <li>登録したメールアドレスが正しいか</li>
+                    <li>迷惑メールフォルダに振り分けられていないか</li>
+                    <li>メールサーバーの受信制限がかかっていないか</li>
+                </ul>
+                
+                <h4>Q9: 会社の情報を変更したい</h4>
+                <p><strong>A:</strong> プロフィール編集画面から変更申請してください。承認後、変更が反映されます。</p>
+                
+                <h4>Q10: システムの利用料金はかかりますか？</h4>
+                <p><strong>A:</strong> システムの利用料金については、弊社担当者にお問い合わせください。</p>
+                
+                <h4>その他のお問い合わせ</h4>
+                <p>上記で解決しない場合や、その他ご不明な点がございましたら、弊社担当者までお気軽にお問い合わせください。</p>
+            </section>
+            
+            <div class="text-center my-5">
+                <a href="{% url 'documents:client_dashboard' %}" class="btn btn-success btn-lg">
+                    <i class="bi bi-house"></i> ダッシュボードに戻る
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .nav-link {
+        padding: 0.5rem 1rem;
+        color: #495057;
+    }
+    .nav-link:hover {
+        background-color: #f8f9fa;
+        color: #28a745;
+    }
+    section {
+        scroll-margin-top: 70px;
+    }
+    h2 {
+        color: #28a745;
+        margin-top: 2rem;
+    }
+    h4 {
+        color: #495057;
+        margin-top: 1.5rem;
+    }
+    h5 {
+        color: #6c757d;
+        margin-top: 1rem;
+    }
+    code {
+        background-color: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+    }
+</style>
+{% endblock %}

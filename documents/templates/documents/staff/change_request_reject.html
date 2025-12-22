@@ -1,0 +1,106 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}変更依頼却下 - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>変更依頼却下</h2>
+    <a href="{% url 'documents:change_request_detail' request.id %}" class="btn btn-secondary">詳細に戻る</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4 border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">却下確認</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    以下の変更依頼を却下しようとしています。
+                </div>
+
+                <table class="table table-bordered mb-4">
+                    <tr>
+                        <th width="150">取引先コード</th>
+                        <td>{{ request.client.client_code }}</td>
+                    </tr>
+                    <tr>
+                        <th>取引先名</th>
+                        <td>{{ request.client.client_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>依頼者</th>
+                        <td>
+                            {% if request.requested_by %}
+                                {{ request.requested_by.full_name }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>変更項目</th>
+                        <td>
+                            {% if request.client_name %}
+                                <span class="badge bg-info">取引先名</span>
+                            {% endif %}
+                            {% if request.address %}
+                                <span class="badge bg-info">住所</span>
+                            {% endif %}
+                            {% if request.group_password %}
+                                <span class="badge bg-warning text-dark">パスワード</span>
+                            {% endif %}
+                            {% if request.contact_changes.exists %}
+                                <span class="badge bg-primary">担当者({{ request.contact_changes.count }}件)</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.rejection_reason.id_for_label }}" class="form-label">
+                            <strong>却下理由（必須）</strong>
+                        </label>
+                        {{ form.rejection_reason }}
+                        {% if form.rejection_reason.errors %}
+                            <div class="text-danger">
+                                {{ form.rejection_reason.errors }}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            依頼者にメールで通知される内容です。具体的な理由を記載してください。
+                        </small>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'documents:change_request_detail' request.id %}" class="btn btn-secondary">
+                            キャンセル
+                        </a>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('本当に却下してもよろしいですか？')">
+                            <i class="bi bi-x-circle"></i> 却下する
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">注意事項</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>却下すると、依頼者にメール通知が送信されます</li>
+                    <li>却下後、依頼者は再度申請を行うことができます</li>
+                    <li>却下理由は必ず記入してください</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

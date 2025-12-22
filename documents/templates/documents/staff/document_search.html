@@ -1,0 +1,130 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}文書検索 - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>文書検索</h2>
+    <div>
+        <a href="{% url 'documents:staff_document_upload' %}" class="btn btn-success">
+            <i class="bi bi-upload"></i> 文書アップロード
+        </a>
+        <a href="{% url 'documents:staff_dashboard' %}" class="btn btn-secondary">ダッシュボードに戻る</a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">検索条件</h5>
+    </div>
+    <div class="card-body">
+        <form method="get">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="{{ form.client_code.id_for_label }}" class="form-label">取引先コード</label>
+                    {{ form.client_code }}
+                    {% if form.client_code.errors %}
+                        <div class="text-danger small">{{ form.client_code.errors }}</div>
+                    {% endif %}
+                    <small class="form-text text-muted">空欄の場合は全件検索</small>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="{{ form.year.id_for_label }}" class="form-label">年度</label>
+                    {{ form.year }}
+                    {% if form.year.errors %}
+                        <div class="text-danger small">{{ form.year.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="{{ form.month.id_for_label }}" class="form-label">月</label>
+                    {{ form.month }}
+                    {% if form.month.errors %}
+                        <div class="text-danger small">{{ form.month.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i> 検索
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if documents %}
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">検索結果（{{ documents|length }}件）</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ファイル名</th>
+                            <th>文書種別</th>
+                            <th>請求書番号</th>
+                            <th>請求日</th>
+                            <th>版数</th>
+                            <th>登録日時</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for document in documents %}
+                            <tr>
+                                <td>
+                                    {{ document.file_name }}
+                                    {% if document.is_latest %}
+                                        <span class="badge bg-primary">最新版</span>
+                                    {% endif %}
+                                    {% if document.encrypt_flag %}
+                                        <i class="bi bi-lock-fill text-warning" title="暗号化"></i>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if document.document_type == 'monthly' %}
+                                        <span class="badge bg-info">月次請求書</span>
+                                    {% elif document.document_type == 'adhoc' %}
+                                        <span class="badge bg-secondary">随時請求書</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ document.invoice_number }}</td>
+                                <td>{{ document.invoice_date|date:"Y/m/d" }}</td>
+                                <td>v{{ document.version }}</td>
+                                <td>{{ document.created_at|date:"Y/m/d H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'documents:staff_document_detail' document.id %}" class="btn btn-sm btn-primary">詳細</a>
+                                    <a href="{% url 'documents:staff_document_download' document.id %}" class="btn btn-sm btn-success" target="_blank">
+                                        <i class="bi bi-download"></i> DL
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% elif request.GET %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> 検索条件に一致する文書が見つかりませんでした。
+    </div>
+{% endif %}
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h5 class="mb-0">検索のヒント</h5>
+    </div>
+    <div class="card-body">
+        <ul>
+            <li><strong>全件検索</strong>: すべての項目を空欄にして検索すると、全文書を表示します</li>
+            <li><strong>取引先コード</strong>: 5桁の数字を指定すると、その取引先の文書のみを検索します</li>
+            <li><strong>年度</strong>: 指定すると、その年の文書のみを検索します（例: 2024）</li>
+            <li><strong>月</strong>: 指定すると、その月の文書のみを検索します（例: 12）</li>
+            <li><strong>複合検索</strong>: 複数の条件を組み合わせて絞り込むこともできます</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

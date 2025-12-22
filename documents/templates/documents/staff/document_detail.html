@@ -1,0 +1,157 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}文書詳細 - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>文書詳細</h2>
+    <a href="{% url 'documents:staff_document_search' %}" class="btn btn-secondary">検索に戻る</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">文書情報</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="200">ファイル名</th>
+                        <td>
+                            <strong>{{ document.file_name }}</strong>
+                            {% if document.is_latest %}
+                                <span class="badge bg-primary">最新版</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>文書種別</th>
+                        <td>
+                            {% if document.document_type == 'monthly' %}
+                                <span class="badge bg-info">月次請求書</span>
+                            {% elif document.document_type == 'adhoc' %}
+                                <span class="badge bg-secondary">随時請求書</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>請求書番号</th>
+                        <td>{{ document.invoice_number }}</td>
+                    </tr>
+                    <tr>
+                        <th>請求日</th>
+                        <td>{{ document.invoice_date|date:"Y年m月d日" }}</td>
+                    </tr>
+                    <tr>
+                        <th>版数</th>
+                        <td>v{{ document.version }}</td>
+                    </tr>
+                    <tr>
+                        <th>暗号化</th>
+                        <td>
+                            {% if document.encrypt_flag %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-lock-fill"></i> 暗号化あり
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">暗号化なし</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>ファイルサイズ</th>
+                        <td>{{ document.file_size|filesizeformat }}</td>
+                    </tr>
+                    <tr>
+                        <th>登録日時</th>
+                        <td>{{ document.created_at|date:"Y年m月d日 H:i:s" }}</td>
+                    </tr>
+                    <tr>
+                        <th>更新日時</th>
+                        <td>{{ document.updated_at|date:"Y年m月d日 H:i:s" }}</td>
+                    </tr>
+                    <tr>
+                        <th>登録者</th>
+                        <td>
+                            {% if document.uploaded_by %}
+                                {{ document.uploaded_by.full_name }} ({{ document.uploaded_by.email }})
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">フォルダ情報</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="200">フォルダ名</th>
+                        <td>{{ document.folder.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>フォルダ種別</th>
+                        <td>{{ document.folder.get_folder_type_display }}</td>
+                    </tr>
+                    <tr>
+                        <th>取引先コード</th>
+                        <td>{{ document.folder.client_code }}</td>
+                    </tr>
+                    {% if document.folder.year %}
+                        <tr>
+                            <th>年度</th>
+                            <td>{{ document.folder.year }}年</td>
+                        </tr>
+                    {% endif %}
+                    {% if document.folder.month %}
+                        <tr>
+                            <th>月</th>
+                            <td>{{ document.folder.month }}月</td>
+                        </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">操作</h5>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'documents:staff_document_download' document.id %}" class="btn btn-success w-100 mb-2" target="_blank">
+                    <i class="bi bi-download"></i> ダウンロード
+                </a>
+                <form method="post" action="{% url 'documents:staff_document_delete' document.id %}" onsubmit="return confirm('この文書を削除してもよろしいですか？\n\n※ 同じファイル名の全版数が削除されます。');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="bi bi-trash"></i> 削除
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">注意事項</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>削除すると復元できません</li>
+                    <li>同じファイル名の全版数が削除されます</li>
+                    {% if document.encrypt_flag %}
+                        <li class="text-warning"><strong>暗号化されています</strong></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}変更依頼詳細 - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>変更依頼詳細</h2>
+    <a href="{% url 'documents:change_request_list' %}" class="btn btn-secondary">一覧に戻る</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">依頼情報</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="200">依頼日時</th>
+                        <td>{{ request.requested_at|date:"Y年m月d日 H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th>ステータス</th>
+                        <td>
+                            {% if request.status == 'pending' %}
+                                <span class="badge bg-warning text-dark">未承認</span>
+                            {% elif request.status == 'approved' %}
+                                <span class="badge bg-success">承認済み</span>
+                            {% elif request.status == 'rejected' %}
+                                <span class="badge bg-danger">却下</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>取引先コード</th>
+                        <td><strong>{{ request.client.client_code }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>依頼者</th>
+                        <td>
+                            {% if request.requested_by %}
+                                {{ request.requested_by.full_name }} ({{ request.requested_by.email }})
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% if request.status != 'pending' %}
+                        <tr>
+                            <th>処理日時</th>
+                            <td>{{ request.processed_at|date:"Y年m月d日 H:i" }}</td>
+                        </tr>
+                        <tr>
+                            <th>処理者</th>
+                            <td>{{ request.processed_by.full_name }} ({{ request.processed_by.email }})</td>
+                        </tr>
+                    {% endif %}
+                    {% if request.rejection_reason %}
+                        <tr>
+                            <th>却下理由</th>
+                            <td class="text-danger">{{ request.rejection_reason|linebreaks }}</td>
+                        </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">変更内容</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    {% if request.client_name %}
+                        <tr>
+                            <th width="200">取引先名</th>
+                            <td>
+                                <div class="text-muted small">現在: {{ request.client.client_name }}</div>
+                                <div class="text-primary"><strong>変更後: {{ request.client_name }}</strong></div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if request.address %}
+                        <tr>
+                            <th>住所</th>
+                            <td>
+                                <div class="text-muted small">現在: {{ request.client.address }}</div>
+                                <div class="text-primary"><strong>変更後: {{ request.address|linebreaks }}</strong></div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if request.group_password %}
+                        <tr>
+                            <th>グループパスワード</th>
+                            <td>
+                                <span class="text-primary"><strong>変更あり</strong></span>
+                                <div class="small">新しいパスワード: <code>{{ request.group_password }}</code></div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </table>
+
+                {% if not request.client_name and not request.address and not request.group_password %}
+                    <p class="text-muted mb-0">基本情報の変更はありません</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if request.contact_changes.exists %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">担当者変更</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>操作</th>
+                                <th>担当者名</th>
+                                <th>メールアドレス</th>
+                                <th>パスワード</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contact_change in request.contact_changes.all %}
+                                <tr>
+                                    <td>
+                                        {% if contact_change.action_type == 'add' %}
+                                            <span class="badge bg-success">追加</span>
+                                        {% elif contact_change.action_type == 'update' %}
+                                            <span class="badge bg-warning text-dark">更新</span>
+                                        {% elif contact_change.action_type == 'delete' %}
+                                            <span class="badge bg-danger">削除</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ contact_change.contact_name|default:"-" }}</td>
+                                    <td>{{ contact_change.contact_email|default:"-" }}</td>
+                                    <td>
+                                        {% if contact_change.contact_password %}
+                                            <code>{{ contact_change.contact_password }}</code>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">操作</h5>
+            </div>
+            <div class="card-body">
+                {% if request.status == 'pending' %}
+                    <form method="post" action="{% url 'documents:change_request_approve' request.id %}" class="mb-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success w-100 mb-2" onclick="return confirm('この変更依頼を承認してもよろしいですか？')">
+                            <i class="bi bi-check-circle"></i> 承認する
+                        </button>
+                    </form>
+                    <a href="{% url 'documents:change_request_reject' request.id %}" class="btn btn-danger w-100">
+                        <i class="bi bi-x-circle"></i> 却下する
+                    </a>
+                {% else %}
+                    <div class="alert alert-info mb-0">
+                        この依頼は既に処理済みです。
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

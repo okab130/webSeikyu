@@ -1,0 +1,106 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}スタッフダッシュボード - WEB請求書システム{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">スタッフダッシュボード</h2>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">新規登録依頼（未承認）</h5>
+            </div>
+            <div class="card-body">
+                {% if pending_registrations %}
+                    <ul class="list-group">
+                        {% for request in pending_registrations %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ request.client_code }}</strong> - {{ request.client_name }}<br>
+                                    <small class="text-muted">{{ request.requested_at|date:"Y/m/d H:i" }}</small>
+                                </div>
+                                <a href="{% url 'documents:registration_request_detail' request.id %}" class="btn btn-sm btn-primary">詳細</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="text-end mt-2">
+                        <a href="{% url 'documents:registration_request_list' %}" class="btn btn-sm btn-link">すべて表示</a>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">新規登録依頼はありません</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">変更依頼（未承認）</h5>
+            </div>
+            <div class="card-body">
+                {% if pending_changes %}
+                    <ul class="list-group">
+                        {% for request in pending_changes %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ request.client.client_code }}</strong> - {{ request.client.client_name }}<br>
+                                    <small class="text-muted">{{ request.requested_at|date:"Y/m/d H:i" }}</small>
+                                </div>
+                                <a href="{% url 'documents:change_request_detail' request.id %}" class="btn btn-sm btn-primary">詳細</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="text-end mt-2">
+                        <a href="{% url 'documents:change_request_list' %}" class="btn btn-sm btn-link">すべて表示</a>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">変更依頼はありません</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">クイックアクション</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'documents:staff_client_list' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-people"></i> 取引先一覧
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'documents:staff_document_search' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-search"></i> 文書検索
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'documents:staff_document_upload' %}" class="btn btn-outline-success w-100">
+                            <i class="bi bi-upload"></i> 文書アップロード
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/admin/" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-gear"></i> 管理画面
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <a href="{% url 'documents:staff_manual' %}" class="btn btn-outline-info w-100" target="_blank">
+                            <i class="bi bi-book"></i> 操作マニュアル
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

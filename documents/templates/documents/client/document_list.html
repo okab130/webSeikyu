@@ -1,0 +1,88 @@
+{% extends 'documents/base.html' %}
+
+{% block title %}文書一覧 - WEB請求書システム{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>文書一覧</h2>
+    <a href="{% url 'documents:client_dashboard' %}" class="btn btn-secondary">ダッシュボードに戻る</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if documents %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ファイル名</th>
+                            <th>文書種別</th>
+                            <th>請求書番号</th>
+                            <th>請求日</th>
+                            <th>登録日時</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for document in documents %}
+                            <tr>
+                                <td>
+                                    {{ document.file_name }}
+                                    {% if document.encrypt_flag %}
+                                        <i class="bi bi-lock-fill text-warning" title="暗号化"></i>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if document.document_type == 'monthly' %}
+                                        <span class="badge bg-info">月次請求書</span>
+                                    {% elif document.document_type == 'adhoc' %}
+                                        <span class="badge bg-secondary">随時請求書</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ document.invoice_number }}</td>
+                                <td>{{ document.invoice_date|date:"Y/m/d" }}</td>
+                                <td>{{ document.created_at|date:"Y/m/d H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'documents:client_document_download' document.id %}" class="btn btn-sm btn-success" target="_blank">
+                                        <i class="bi bi-download"></i> ダウンロード
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if is_paginated %}
+                <nav aria-label="ページネーション">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">最初</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">前へ</a>
+                            </li>
+                        {% endif %}
+
+                        <li class="page-item active">
+                            <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                        </li>
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">次へ</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">最後</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <p class="text-muted text-center py-4">文書がありません</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
