@@ -238,7 +238,40 @@ class ChangeRequestApproveView(StaffRequiredMixin, View):
                 group.save()
         
         # 担当者変更処理
-        # TODO: ChangeRequestContactの処理
+        group = Group.objects.filter(client_code=client.client_code).first()
+        for contact_change in change_request.contact_changes.all():
+            if contact_change.action_type == 'add':
+                # 担当者追加
+                user = User.objects.create_user(
+                    email=contact_change.contact_email,
+                    password=contact_change.contact_password,
+                    user_type='client',
+                    client_code=client.client_code,
+                    full_name=contact_change.contact_name
+                )
+                if group:
+                    GroupMember.objects.create(group=group, user=user)
+            
+            elif contact_change.action_type == 'update':
+                # 担当者更新
+                if contact_change.user:
+                    user = contact_change.user
+                    if contact_change.contact_name:
+                        user.full_name = contact_change.contact_name
+                    if contact_change.contact_email:
+                        user.email = contact_change.contact_email
+                    if contact_change.contact_password:
+                        user.set_password(contact_change.contact_password)
+                    user.save()
+            
+            elif contact_change.action_type == 'delete':
+                # 担当者削除
+                if contact_change.user:
+                    user = contact_change.user
+                    if group:
+                        GroupMember.objects.filter(group=group, user=user).delete()
+                    user.is_active = False
+                    user.save()
         
         # 変更依頼のステータスを更新
         change_request.status = 'approved'
@@ -259,11 +292,20 @@ class ChangeRequestApproveView(StaffRequiredMixin, View):
 
 登録情報の変更申請が承認されました。
 
+変更内容が反映されています。
+
 よろしくお願いいたします。
 '''
         
-        # TODO: 取引先の担当者にメール送信
-        pass
+        # 取引先の担当者全員にメール送信
+        users = User.objects.filter(
+            client_code=change_request.client.client_code,
+            user_type='client',
+            is_active=True
+        )
+        recipient_list = [user.email for user in users]
+        if recipient_list:
+            send_mail(subject, message, 'noreply@webseikyu.local', recipient_list)
 
 
 class ChangeRequestRejectView(StaffRequiredMixin, FormView):
@@ -296,8 +338,27 @@ class ChangeRequestRejectView(StaffRequiredMixin, FormView):
     
     def _send_rejection_email(self, change_request):
         """却下メール送信"""
-        # TODO: 実装
-        pass
+        subject = '【WEB請求書システム】変更申請が却下されました'
+        message = f'''
+{change_request.client.client_name} 様
+
+登録情報の変更申請が却下されました。
+
+却下理由:
+{change_request.rejection_reason}
+
+ご不明な点がございましたら、お問い合わせください。
+'''
+        
+        # 取引先の担当者全員にメール送信
+        users = User.objects.filter(
+            client_code=change_request.client.client_code,
+            user_type='client',
+            is_active=True
+        )
+        recipient_list = [user.email for user in users]
+        if recipient_list:
+            send_mail(subject, message, 'noreply@webseikyu.local', recipient_list)
 
 
 class StaffClientListView(StaffRequiredMixin, ListView):

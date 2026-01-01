@@ -20,12 +20,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# パイロットシステム用の開発キー（本番環境では環境変数から読み込むこと）
 SECRET_KEY = 'django-insecure-)gnr^-m^ty7xz8hij$_ft$5zr^4)0i#r5smvan6581+%l&#jb6'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# パイロットシステムはデバッグモードON
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ローカル環境用
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -90,20 +92,10 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+# パイロットシステムでは簡略化（開発効率優先）
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    # パイロットシステムでは最小限の検証のみ
 ]
 
 
@@ -123,6 +115,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # collectstatic用（パイロット環境）
 
 # Media files (User uploaded files)
 MEDIA_URL = '/media/'
@@ -132,4 +125,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 AUTH_USER_MODEL = 'documents.User'
 
 # Email settings (localhost for pilot)
+# パイロットシステムではコンソール出力（実際のメール送信なし）
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
